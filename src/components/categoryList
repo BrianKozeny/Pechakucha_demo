@@ -1,0 +1,23 @@
+import React from 'react'
+
+class arrayList extends React.Component
+{
+   myCategories={
+       catArray:["Aniamls", "Space", "Food"]
+   }
+
+   render()
+   {
+        return(
+            <div>
+                <select>
+                    {this.myCategories.catArray.map(data=>(
+                        <option title={data}>{data}</option>
+                        ))}
+                </select>
+            </div>
+        );
+   }
+
+}
+export default arrayList;
