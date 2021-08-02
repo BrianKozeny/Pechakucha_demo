@@ -7,9 +7,7 @@ class Fact extends Component {
 
     render() {
         return(
-            <div>
                 <button className="btn btn-primary btn-sm">Generate Fact</button>
-            </div>
         );
     }
 }
