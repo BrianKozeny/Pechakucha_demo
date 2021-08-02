@@ -1,21 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Navbar extends Component {
-    state = {
+const Navbar = () => {
 
-    };
-
-    render() {
-        return (
-         <React.Fragment>
-            <nav className="navbar navbar-dark bg-dark">
-                <div className="container-fluid justify-content-center">
-                    <a className="navbar-brand" href="#">Fact Generator</a>
-                </div>
-            </nav>
-         </React.Fragment>
-        );
-    }
+    return (
+        <nav className="navbar navbar-dark bg-dark">
+            <div className="container-fluid justify-content-center">
+                <a className="navbar-brand" href="/">Joke Generator</a>
+            </div>
+        </nav>
+    );
 }
 
 export default Navbar;

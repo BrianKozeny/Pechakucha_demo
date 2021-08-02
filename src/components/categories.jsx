@@ -1,68 +1,100 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect} from "react";
 import '../css/categories.css';
+import Axios from 'axios'; 
+import app from '../App.js';
 
-class Categories extends Component {
-    
-    container = React.createRef();
-    state = {
-        open: false,
+const Categories = (props) => {
+
+    const container = React.createRef();
+    const [state, setState] = useState({ open: false, categoryOptions: []});
+
+    const getJokeCategories = () => {
+        Axios.get('https://v2.jokeapi.dev/categories').then(
+            (response) => {
+                setState((prevState) => {
+                    const newState = {
+                        ...prevState,
+                        categoryOptions: response.data.categories.filter(category => category.toUpperCase() != 'DARK')
+                    }
+                    return newState;
+                });
+            }
+        );
     };
+    useEffect(() => {
+        getJokeCategories();
+    }, [])
 
-    myCategories={
-       catArray:["Animals", "Space", "Food"]
-   }
-    
-    componentDidMount() {
-        document.addEventListener("mousedown", this.handleClickOutside);
-    }
+    useEffect(function setupListener() {
+        const handleClickOutside = (event) => {
+            if (
+                container.current &&
+                !container.current.contains(event.target)
+            ) {
+                setState((prevState) => {
+                    const newState = {
+                        ...prevState,
+                        open: false, 
+                    }
+                    return newState;
+                });
+            }
+        };
 
-    componentWillUnmount() {
-        document.removeEventListener("mousedown", this.handleClickOutside);
-    }
+        window.addEventListener('mousedown', handleClickOutside)
 
-    handleClick = () => {
-        this.setState((state) => {
-            return {
-                open: !state.open,
-            };
+        return function cleanupListener() {
+            window.removeEventListener('mousedown', handleClickOutside)
+        }
+    });
+
+
+    const handleClick = () => {
+        setState((prevState) => {
+            const newState = {
+                ...prevState,
+                open: !state.open, 
+            }
+            return newState;
         });
     };
 
-    handleClickOutside = (event) => {
-        if (
-            this.container.current &&
-            !this.container.current.contains(event.target)
-        ) {
-            this.setState({
-                open: false,
-            });
-        }
-    };
+    const categoryLabel = props.category ? props.category : "Categories";
 
-    
-    render() {
-        return (
-         <React.Fragment>
-            <div className="container" ref={this.container}>
-                <div className="dropdown"> 
-                  <button onClick={this.handleClick} className="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                    Categories
-                  </button>
-                  {this.state.open && (
-                      <div className="dropdown">
-                        <ul>
-
-                            <div>
-                                    {this.myCategories.catArray.map(data => <li key={data}><button key={data}>{ data }</button></li>)}
-                            </div>
-                        </ul>
-                      </div>
-                    )}
-                </div>
-            </div>
-         </React.Fragment>
-        );
+    const handleCategoryButtonClick = (event) => {
+        setState((prevState) => {
+            const newState = {
+                ...prevState,
+                open: false, 
+            }
+            return newState;
+        });
+        props.handleCategorySelect(event);
     }
+
+    return (
+        <div className="container" ref={container}>
+          <div className="dropdown"> 
+            <button onClick={handleClick} className="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                {categoryLabel}
+            </button>
+            {state.open && (
+                <div className="dropdown">
+                  <ul>
+                      <div>
+                          { state.categoryOptions.map(data => 
+                              <li key={data}>
+                                  <button value={data} onClick={handleCategoryButtonClick} key={data}>{ data }</button>
+                              </li>
+                            ) 
+                          }
+                      </div>
+                  </ul>
+                </div>
+              )}
+          </div>
+        </div>
+    );
 }
 
 export default Categories;
